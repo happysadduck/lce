@@ -58,6 +58,11 @@ typedef struct{
    long tick;
 }Discovery;
 
+typedef struct{
+   double accurate_tick;
+   Point damage;
+}Collision;
+
 int get_discovery_general(
    const Plan*observed_plan,
    const Ship*observer,
