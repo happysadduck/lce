@@ -12,7 +12,7 @@ typedef struct Angle{
    Point range;
    struct Angle*next;
 }Angle;
- 
+
 typedef struct Ship{
    Point p;
    Point v;
@@ -63,6 +63,11 @@ typedef struct{
    Point damage;
 }Collision;
 
+typedef struct{
+   Point center;
+   double side;
+}Square;
+
 int get_discovery_general(
    const Plan*observed_plan,
    const Ship*observer,
@@ -70,6 +75,13 @@ int get_discovery_general(
    long current_tick,
    long max_backtrace_tick,
    Discovery*out
+);
+
+int get_collisions(
+    Ship*ship,
+    DamageSrc*damage,
+    Square*considered_covering,
+    Collision*out
 );
 
 #endif

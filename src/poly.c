@@ -125,3 +125,45 @@ int solve_quartic_roots(
     }
     return root_cnt;
 }
+
+int solve_quadratic_roots(
+    double a, double b,
+    double c, double*roots, double t
+){
+    if(fabs(a)<EPS){
+        if(fabs(b)<EPS) return 0;
+        double x=-c/b;
+        if(x>=-EPS && x<=t+EPS){
+            roots[0]=x;
+            return 1;
+        }
+        return 0;
+    }
+    double disc=b*b-4*a*c;
+    if(disc<-EPS) return 0;
+    if(fabs(disc)<EPS){
+        double x=-b/(2*a);
+        if(x>=-EPS && x<=t+EPS){
+            roots[0]=x;
+            return 1;
+        }
+        return 0;
+    }
+    double sqrt_d=sqrt(disc);
+    double x1, x2;
+    if(b>=0){
+        x1=(-b-sqrt_d)/(2*a);
+        x2=(2*c)/(-b-sqrt_d);
+    }else{
+        x1=(-b+sqrt_d)/(2*a);
+        x2=(2*c)/(-b+sqrt_d);
+    }
+    int cnt=0;
+    if(x1>=-EPS && x1<=t+EPS)
+        roots[cnt++]=x1;
+    if(x2>=-EPS && 
+        x2<=t+EPS &&
+        fabs(x2-x1)>EPS
+    ) roots[cnt++]=x2;
+    return cnt;
+}

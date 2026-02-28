@@ -2,6 +2,6 @@
 #define CONFIG_H
 
 #define SHIP_CNT 128
-#define TICK_STEP 0.5
+#define TICK_STEP 1.0
 
 #endif

@@ -7,4 +7,9 @@ int solve_quartic_roots(
     double *roots, double t
 );
 
+int solve_quadratic_roots(
+    double a, double b,
+    double c, double*roots, double t
+);
+
 #endif
