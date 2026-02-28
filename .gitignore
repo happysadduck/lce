@@ -70,3 +70,6 @@ build/
 out/
 cmake-build-*/
 [Bb]uild*/
+
+# VSCode
+.vscode/
