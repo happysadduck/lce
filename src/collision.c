@@ -160,3 +160,128 @@ int get_collisions(
     }
     return out_cnt;
 }
+
+static double binary_search_boundary(
+    DamageSrc*circle,
+    Square*square,
+    double t1, double t2, int s1
+){
+    double left=t1;
+    double right=t2;
+    const double EPS=1e-12;
+    if(right<left) right+=2.0*PI;
+    while(right-left>EPS){
+        double mid=(left+right)/2.0;
+        double mid_norm=direction_normalize(mid);
+        int mid_state=square_hinder(
+            circle, square, mid_norm
+        );
+        if(mid_state==s1)
+            left==mid;
+        else right=mid;
+    }
+    return direction_normalize((left+right)/2.0);
+}
+
+void update_damagesrc(
+    DamageSrc*damage,
+    Square*covering,
+    Pool*pool_for_angles
+){
+    const int MAX_BOUNDARIES=16;
+    const int COARSE_CNT=32;
+    double boundaries[MAX_BOUNDARIES];
+    int boundary_cnt=0;
+    int coarse_status[COARSE_CNT];
+    double coarse_angs[COARSE_CNT];
+    for(int i=0; i<COARSE_CNT; i++){
+        coarse_angs[i]=(i*2.0*PI)/COARSE_CNT;
+        coarse_status[i]=square_hinder(
+            damage, covering, coarse_angs[i]
+        );
+    }
+    for(int i=0; i<COARSE_CNT; i++){
+        int next=(i+1)%COARSE_CNT;
+        double t1=coarse_angs[i];
+        double t2=coarse_angs[next];
+        int s1=coarse_status[i];
+        int s2=coarse_status[next];
+        if(s1!=s2){
+            if(boundary_cnt<MAX_BOUNDARIES)
+                boundaries[boundary_cnt++]=
+                    binary_search_boundary(
+                        damage, covering,
+                        t1, t2, s1
+                    );
+        }else{
+            double dt=t2-t1;
+            if(dt<0) dt+=2.0*PI;
+            if(dt>PI/8.0 && 
+                boundary_cnt+1<MAX_BOUNDARIES
+            ){
+                double mid=direction_normalize(
+                    t1+dt/2.0
+                );
+                int mid_state=square_hinder(
+                    damage, covering, mid
+                );
+                if(mid_state!=s1){
+                    boundaries[boundary_cnt++]=
+                        binary_search_boundary(
+                            damage, covering,
+                            t1, mid, s1
+                        );
+                    boundaries[boundary_cnt++]=
+                        binary_search_boundary(
+                            damage, covering,
+                            mid, t2, mid_state
+                        );
+                }
+            }
+        }
+    }
+    if(boundary_cnt==0){
+        if(square_hinder(damage, covering, 0.0)){
+            Angle*new_hinder1=pool_alloc(
+                pool_for_angles
+            );
+            Angle*new_hinder2=pool_alloc(
+                pool_for_angles
+            );
+            new_hinder1->range.x=0.0;
+            new_hinder1->range.y=PI;
+            new_hinder2->range.x=PI;
+            new_hinder2->range.y=0;
+            add_angle(
+                damage->disabled, new_hinder1
+            );
+            add_angle(
+                damage->disabled, new_hinder2
+            );
+        }
+        return;
+    }
+    for(int i=0; i<boundary_cnt; i++){
+        double start=boundaries[i];
+        double end=boundaries[(i+1)%boundary_cnt];
+        double mid;
+        if(end>start)
+            mid=(start+end)/2.0;
+        else
+            mid=direction_normalize(
+                start+(end+2.0*PI-start)/2.0
+            );
+        if(square_hinder(
+            damage, covering, mid
+        )){
+            Angle*new_hinder=pool_alloc(
+                pool_for_angles
+            );
+            new_hinder->range.x=start;
+            new_hinder->range.y=end;
+            add_angle(
+                damage->disabled, new_hinder
+            );
+        }
+    }
+}

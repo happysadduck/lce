@@ -2,6 +2,7 @@
 #define CORE_H
 
 #include"config.h"
+#include"pool.h"
 
 typedef struct{
    double x;
@@ -82,6 +83,12 @@ int get_collisions(
     DamageSrc*damage,
     Square*considered_covering,
     Collision*out
+);
+
+void update_damagesrc(
+    DamageSrc*damage,
+    Square*covering,
+    Pool*pool_for_angles
 );
 
 #endif
