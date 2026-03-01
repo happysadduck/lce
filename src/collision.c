@@ -5,9 +5,9 @@
 #include"angle.h"
 
 static int get_collision_tick(
-    Ship *ship,
-    DamageSrc *damage,
-    double *out)
+    const Ship*ship,
+    const DamageSrc*damage,
+    double*out)
 {
     Point D={
         ship->p.x-damage->o.x,
@@ -58,8 +58,8 @@ static int get_collision_tick(
 }
 
 static int square_hinder(
-    DamageSrc*circle,
-    Square*square,
+    const DamageSrc*circle,
+    const Square*square,
     double direction
 ){
     double ux=cos(direction);
@@ -115,9 +115,9 @@ static int square_hinder(
 }
 
 int get_collisions(
-    Ship*ship,
-    DamageSrc*damage,
-    Square*considered_covering,
+    const Ship*ship,
+    const DamageSrc*damage,
+    const Square*considered_covering,
     Collision*out
 ){
     double collision_ticks[4];
@@ -162,8 +162,8 @@ int get_collisions(
 }
 
 static double binary_search_boundary(
-    DamageSrc*circle,
-    Square*square,
+    const DamageSrc*circle,
+    const Square*square,
     double t1, double t2, int s1
 ){
     double left=t1;
@@ -185,7 +185,7 @@ static double binary_search_boundary(
 
 void update_damagesrc(
     DamageSrc*damage,
-    Square*covering,
+    const Square*covering,
     Pool*pool_for_angles
 ){
     const int MAX_BOUNDARIES=16;

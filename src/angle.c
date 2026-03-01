@@ -12,7 +12,7 @@ int direction_normalize(
 }
 
 int is_in_angle(
-    Angle*angle,
+    const Angle*angle,
     double direction
 ){
     if(angle->range.x<angle->range.y){
@@ -28,7 +28,7 @@ int is_in_angle(
 }
 
 int is_in_angles(
-    Angle*angles,
+    const Angle*angles,
     double direction
 ){
     while(angles){
