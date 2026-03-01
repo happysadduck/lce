@@ -56,9 +56,10 @@ typedef struct{
     Point damage;
 }Collision;
 
-typedef struct{
+typedef struct Square{
     Point center;
     double side;
+    struct Square*next;
 }Square;
 
 typedef struct{
@@ -85,18 +86,21 @@ typedef struct{
 
 typedef struct{
     Ship*ships;
+    Square*squares;
     DamageSrc*lasers;
     DamageSrc*debris;
     Discovery*discoveries;
     long tick;
 }Map;
 
-int get_discovery_general(
+int get_discovery(
     const Plan*observed_plan,
     const Ship*observer,
     const Ship*observed,
     long current_tick,
     long max_backtrace_tick,
+    const Square*covering,
+    int pierce,
     Discovery*out
 );
 

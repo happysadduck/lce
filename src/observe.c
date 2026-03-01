@@ -2,12 +2,64 @@
 #include"core.h"
 #include"config.h"
 
+const int square_segment_intersect(
+    const Square*square,
+    const Point*s1,
+    const Point*s2
+){
+    double half=square->side/2.0;
+    double side[]={
+        square->center.x-half,
+        square->center.x+half,
+        square->center.y-half,
+        square->center.y+half
+    };
+    if(
+        s1->x>=side[0] && s1->x<=side[1] &&
+        s1->y>=side[2] && s1->y<=side[3]
+    ) return 1;
+    if(
+        s2->x>=side[0] && s2->x <=side[1] &&
+        s2->y>=side[2] && s2->y<=side[3]
+    ) return 1;
+    double bd[]={
+        s1->x, s2->x,
+        s1->y, s2->y
+    };
+    for(int i=0; i<2; i++){
+        for(int j=0; j<2; j++){
+            if(bd[2*(!i)]!=bd[2*(!i)+1]){
+                double t=
+                    (side[2*(!i)+j]-bd[2*(!i)])/
+                    (bd[2*(!i)+1]-bd[2*(!i)]);
+                if(t>=0 && t<=1){
+                    double b=bd[2*i]+t*
+                        (bd[2*i+1]-bd[2*i]);
+                    if(b>=side[2*i] && 
+                        b<=side[2*i+1]
+                    ) return 1;
+                }
+            }else if(bd[2*(!i)]==side[2*i+j]){
+                if(
+                    fmax(bd[2*i], bd[2*i+1])
+                        >=side[2*i] &&
+                    fmin(bd[2*i], bd[2*i+1])
+                        <=side[2*i+1]
+                ) return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 /*CAN BE FASTER*/
-int get_discovery(
+static get_discovery_simple(
     const Ship*observer,
     const Ship*observed,
     long current_tick,
     long max_backtrace_tick,
+    const Square*covering,
+    int pierce,
     Discovery*out
 ){
     double Ox=observer->p.x;
@@ -48,19 +100,25 @@ int get_discovery(
                 -0.5*Ax*dt1_sec*dt1_sec;
             out->p.y=By-Vy*dt1_sec
                 -0.5*Ay*dt1_sec*dt1_sec;
-            return 1;
+            if(pierce ||
+                !square_segment_intersect(
+                covering, &out->p, &observer->p
+            )) return 1;
+            return 0;
         }
         prev_f=curr_f;
     }
     return 0;
 }
 
-int get_discovery_general(
+int get_discovery(
     const Plan*observed_plan,
     const Ship*observer,
     const Ship*observed,
     long current_tick,
     long max_backtrace_tick,
+    const Square*covering,
+    int pierce,
     Discovery*out
 ){
     if(current_tick<=max_backtrace_tick)
@@ -98,11 +156,12 @@ int get_discovery_general(
         temp_ship.a=a_curr;
         temp_ship.next=0;
         if(
-            get_discovery(
+            get_discovery_simple(
                 observer,
                 &temp_ship,
                 current_tick,
-                L, out
+                L, covering, 
+                pierce, out
             )
         ){
             if(
@@ -134,5 +193,3 @@ int get_discovery_general(
     }
     return 0;
 }
-
-/*TODO*/
