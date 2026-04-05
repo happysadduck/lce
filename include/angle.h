@@ -3,25 +3,21 @@
 
 #define PI 3.14159265358979323846
 
-#include"core.h"
+#include "core.h"
 
 int direction_normalize(
-    double direction
-);
+    double direction);
 
 int is_in_angle(
-    const Angle*angle,
-    double direction
-);
+    const Angle *angle,
+    double direction);
 
 int is_in_angles(
-    const Angle*angles,
-    double direction
-);
+    const Angle *angles,
+    double direction);
 
-Angle*add_angle(
-    Angle*angles,
-    Angle*angle
-);
+Angle *add_angle(
+    Angle *angles,
+    Angle *angle);
 
 #endif
