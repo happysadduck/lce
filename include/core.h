@@ -4,6 +4,9 @@
 #include "config.h"
 #include "pool.h"
 
+/*TODO: 认为plan controller中的plan和monitored应该用哈希表比较好. 或需要id分配器*/
+/*TODO: damage.c, 用于处理碰撞的后效以及产生爆炸(需要新类explosion)*/
+
 typedef struct
 {
     double x;
@@ -23,6 +26,7 @@ typedef struct Ship
     Point a;
     struct Ship *next;
     unsigned int id;
+    int team;
 } Ship;
 
 typedef struct DamageSrc
@@ -54,8 +58,9 @@ typedef struct Plan
 typedef struct Discovery
 {
     Point p;
-    long tick;
     struct Discovery *next;
+    long tick;
+    int observer_team;
 } Discovery;
 
 typedef struct
@@ -80,6 +85,7 @@ typedef struct
     xxxxxxx0: not gg yet
     xxxxxxx1: gg
     */
+    long send_tick;
     void *data;
 } Message;
 

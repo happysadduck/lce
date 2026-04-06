@@ -55,7 +55,7 @@ const int square_segment_intersect(
 }
 
 /*CAN BE FASTER*/
-static get_discovery_simple(
+static int get_discovery_simple(
     const Ship *observer,
     const Ship *observed,
     long current_tick,
