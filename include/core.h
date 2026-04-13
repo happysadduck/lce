@@ -4,7 +4,7 @@
 #include "config.h"
 #include "pool.h"
 
-/*TODO: 认为plan controller中的plan和monitored应该用哈希表比较好. 或需要id分配器*/
+/*TODO: 认为plan controller中的plan和MsgReceiver应该用哈希表比较好. 或需要id分配器*/
 /*TODO: damage.c, 用于处理碰撞的后效以及产生爆炸(需要新类explosion)*/
 
 typedef struct
@@ -19,11 +19,37 @@ typedef struct Angle
     struct Angle *next;
 } Angle;
 
+typedef struct ShipStructNode
+{
+    char part_type;
+    /*
+    m: main commander
+    f: factory
+    c: commander
+    e: engine
+    c: energy core
+    s: store
+    l: laser
+    r: rader
+    b: engineering robots
+    */
+    int state;
+    /*
+    engine: power
+    s: front half for fuel storage, end half for materials storage
+    */
+    struct ShipStructNode *up;
+    struct ShipStructNode *down;
+    struct ShipStructNode *left;
+    struct ShipStructNode *right;
+} ShipStructNode;
+
 typedef struct Ship
 {
     Point p;
     Point v;
     Point a;
+    ShipStructNode *commander_part;
     struct Ship *next;
     unsigned int id;
     int team;
@@ -86,20 +112,20 @@ typedef struct
     xxxxxxx1: gg
     */
     long send_tick;
-    void *data;
+    void *data; /*ShipAct/Discovery*/
 } Message;
 
-typedef struct Monitored
+typedef struct MsgReceiver
 {
-    Ship *ship;
-    Message *message;
-    struct Monitored *next;
-} Monitored;
+    Ship *msg_src;
+    Message message;
+    struct MsgReceiver *next;
+} MsgReceiver;
 
 typedef struct
 {
     Plan plans[SHIP_CNT];
-    Monitored monitors[SHIP_CNT];
+    MsgReceiver receivers[SHIP_CNT];
 } PlanController;
 
 typedef struct
@@ -132,5 +158,8 @@ void update_damagesrc(
     DamageSrc *damage,
     const Square *covering,
     Pool *pool_for_angles);
+
+int damage(Ship *ship,
+           const Collision *collision);
 
 #endif
