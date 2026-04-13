@@ -2,14 +2,6 @@
 #include <string.h>
 #include "pool.h"
 
-struct Pool
-{
-	char *data;
-	char **stack;
-	char **stack_top;
-	int block_size;
-};
-
 Pool *prepare_pool(
 	int size,
 	int cnt)

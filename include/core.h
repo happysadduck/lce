@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "pool.h"
+#include "generic_hash_table.h"
 
 /*TODO: 认为plan controller中的plan和MsgReceiver应该用哈希表比较好. 或需要id分配器*/
 /*TODO: damage.c, 用于处理碰撞的后效以及产生爆炸(需要新类explosion)*/
@@ -49,10 +50,11 @@ typedef struct Ship
     Point p;
     Point v;
     Point a;
+    int max_discovered_light_tick;
     ShipStructNode *commander_part;
     struct Ship *next;
     unsigned int id;
-    int team;
+    struct Ship *king;
 } Ship;
 
 typedef struct DamageSrc
@@ -104,13 +106,8 @@ typedef struct Square
 
 typedef struct
 {
-    char info;
-    /*
-    0xxxxxxx: it's a message (Discovery List)
-    1xxxxxxx: it's a command (Plan List)
-    xxxxxxx0: not gg yet
-    xxxxxxx1: gg
-    */
+    char is_command;
+    char is_gg;
     long send_tick;
     void *data; /*ShipAct/Discovery*/
 } Message;
@@ -124,8 +121,11 @@ typedef struct MsgReceiver
 
 typedef struct
 {
-    Plan plans[SHIP_CNT];
-    MsgReceiver receivers[SHIP_CNT];
+    Pool *pool_for_discoveries;
+    Pool *pool_for_ght_nodes;
+    Pool *pool_for_msgs;
+    ght_table_t plans;
+    ght_table_t receivers;
 } PlanController;
 
 typedef struct
@@ -144,7 +144,7 @@ int get_discovery(
     const Ship *observed,
     long current_tick,
     long max_backtrace_tick,
-    const Square *covering,
+    const Square *coverings,
     int pierce,
     Discovery *out);
 

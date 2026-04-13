@@ -60,7 +60,7 @@ static int get_discovery_simple(
     const Ship *observed,
     long current_tick,
     long max_backtrace_tick,
-    const Square *covering,
+    const Square *coverings,
     int pierce,
     Discovery *out)
 {
@@ -96,11 +96,16 @@ static int get_discovery_simple(
             double dt1_sec = (current_tick - (t + 1)) * TICK_STEP;
             out->p.x = Bx - Vx * dt1_sec - 0.5 * Ax * dt1_sec * dt1_sec;
             out->p.y = By - Vy * dt1_sec - 0.5 * Ay * dt1_sec * dt1_sec;
-            if (pierce ||
-                !square_segment_intersect(
-                    covering, &out->p, &observer->p))
+            if (pierce)
                 return 1;
-            return 0;
+            const Square *curr_cover = coverings;
+            while (curr_cover)
+            {
+                if (square_segment_intersect(curr_cover, &out->p, &observer->p))
+                    return 0;
+                curr_cover = curr_cover->next;
+            }
+            return 1;
         }
         prev_f = curr_f;
     }
@@ -113,7 +118,7 @@ int get_discovery(
     const Ship *observed,
     long current_tick,
     long max_backtrace_tick,
-    const Square *covering,
+    const Square *coverings,
     int pierce,
     Discovery *out)
 {
@@ -159,7 +164,7 @@ int get_discovery(
                 observer,
                 &temp_ship,
                 current_tick,
-                L, covering,
+                L, coverings,
                 pierce, out))
         {
             if (

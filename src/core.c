@@ -13,6 +13,25 @@ void update_map(
     4. 母舰处理同阵营其他飞船的信息, 更新map中的discovery.
     5. 飞船处理自己母舰的指令, 更新controller的plan
     */
+    Ship *curr_ship = map->ships;
+    while (curr_ship)
+    {
+        Ship *detected = map->ships;
+        Plan *observed_plan = ght_find(&controller->plans, detected, sizeof(detected))->value;
+        Discovery *out = pool_alloc(controller->pool_for_discoveries);
+        if (get_discovery(
+                observed_plan,
+                curr_ship,
+                detected,
+                map->tick,
+                detected->max_discovered_light_tick,
+                map->squares, 0, out))
+        {
+            ght_node_t *node = pool_alloc(controller->pool_for_ght_nodes);
+            Message *msg = pool_alloc(controller->pool_for_msgs);
+            ght_insert(&controller->receivers, node, curr_ship->king, msg, sizeof(curr_ship->king), sizeof(msg));
+        }
+    }
 }
 
 void send_msg(
