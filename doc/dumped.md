@@ -215,3 +215,5 @@ int main() {
     return 0;
 }
 ```
+
+至0.2pre1起, 除了pool和generic_hash_table相关代码, 所有0.1pre版本代码均被移除(可能参考)
