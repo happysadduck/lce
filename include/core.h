@@ -73,6 +73,7 @@ typedef struct
     double laser_direction;
     int detect;
     int explode;
+    int disappear;
 } ShipAct;
 
 typedef struct Plan
@@ -88,7 +89,6 @@ typedef struct Discovery
     Point p;
     struct Discovery *next;
     long tick;
-    int observer_team;
 } Discovery;
 
 typedef struct
@@ -144,22 +144,21 @@ int get_discovery(
     const Ship *observed,
     long current_tick,
     long max_backtrace_tick,
-    const Square *coverings,
+    const Square *covers,
     int pierce,
     Discovery *out);
 
 int get_collisions(
     const Ship *ship,
     const DamageSrc *damage,
-    const Square *considered_covering,
+    const Square *covers,
     Collision *out);
 
 void update_damagesrc(
     DamageSrc *damage,
-    const Square *covering,
+    const Square *covers,
     Pool *pool_for_angles);
 
-int damage(Ship *ship,
-           const Collision *collision);
+int calculate_damage(Ship *ship, const Collision *collisions);
 
 #endif

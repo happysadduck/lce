@@ -71,3 +71,5 @@ send_command现在变成了send_msg, 因为理论上没有区别.
 修改了get_discoveries, 现在不用三重遍历目标-观测者-掩体. 
 给core.h又添加了一些必要的字段.
 修改了Message类, 现在不再是愚蠢的按位存储.
+修改了get_collision, 现在也不用再三重遍历船-碎片/激光-掩体
+去掉了send_msg, 好像没有什么用.

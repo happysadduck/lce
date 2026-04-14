@@ -116,10 +116,26 @@ static int square_hinder(
         return 0;
 }
 
+static int is_colliding_direction(
+    const DamageSrc *damage,
+    const Square *covers,
+    double direction)
+{
+    if (is_in_angles(damage->disabled, direction))
+        return 0;
+    while (covers)
+    {
+        if (square_hinder(damage, covers, direction))
+            return 0;
+        covers = covers->next;
+    }
+    return 1;
+}
+
 int get_collisions(
     const Ship *ship,
     const DamageSrc *damage,
-    const Square *considered_covering,
+    const Square *covers,
     Collision *out)
 {
     double collision_ticks[4];
@@ -139,13 +155,7 @@ int get_collisions(
         double oy = damage->o.y + damage->v.y;
         double direction = direction_normalize(
             atan2(py - oy, px - ox));
-        if (
-            !is_in_angles(
-                damage->disabled,
-                direction) &&
-            !square_hinder(
-                damage, considered_covering,
-                direction))
+        if (is_colliding_direction(damage, covers, direction))
         {
             out[out_cnt].accurate_tick = t;
             double vx = damage->v.x +
