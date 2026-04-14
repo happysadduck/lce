@@ -1,16 +1,9 @@
 cmake_minimum_required(VERSION 3.11)
 project(lce C)
+add_subdirectory(raylib)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-
-include(FetchContent)
-FetchContent_Declare(
-    raylib
-    GIT_REPOSITORY https://github.com/raysan5/raylib.git
-    GIT_TAG 5.5
-)
-FetchContent_MakeAvailable(raylib)
 
 file(GLOB SOURCES "src/*.c")
 

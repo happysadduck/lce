@@ -197,7 +197,7 @@ static double binary_search_boundary(
 
 void update_damagesrc(
     DamageSrc *damage,
-    const Square *covering,
+    const Square *cover,
     Pool *pool_for_angles)
 {
     const int MAX_BOUNDARIES = 16;
@@ -210,7 +210,7 @@ void update_damagesrc(
     {
         coarse_angs[i] = (i * 2.0 * PI) / COARSE_CNT;
         coarse_status[i] = square_hinder(
-            damage, covering, coarse_angs[i]);
+            damage, cover, coarse_angs[i]);
     }
     for (int i = 0; i < COARSE_CNT; i++)
     {
@@ -224,7 +224,7 @@ void update_damagesrc(
             if (boundary_cnt < MAX_BOUNDARIES)
                 boundaries[boundary_cnt++] =
                     binary_search_boundary(
-                        damage, covering,
+                        damage, cover,
                         t1, t2, s1);
         }
         else
@@ -238,16 +238,16 @@ void update_damagesrc(
                 double mid = direction_normalize(
                     t1 + dt / 2.0);
                 int mid_state = square_hinder(
-                    damage, covering, mid);
+                    damage, cover, mid);
                 if (mid_state != s1)
                 {
                     boundaries[boundary_cnt++] =
                         binary_search_boundary(
-                            damage, covering,
+                            damage, cover,
                             t1, mid, s1);
                     boundaries[boundary_cnt++] =
                         binary_search_boundary(
-                            damage, covering,
+                            damage, cover,
                             mid, t2, mid_state);
                 }
             }
@@ -255,7 +255,7 @@ void update_damagesrc(
     }
     if (boundary_cnt == 0)
     {
-        if (square_hinder(damage, covering, 0.0))
+        if (square_hinder(damage, cover, 0.0))
         {
             Angle *new_hinder1 = pool_alloc(
                 pool_for_angles);
@@ -283,7 +283,7 @@ void update_damagesrc(
             mid = direction_normalize(
                 start + (end + 2.0 * PI - start) / 2.0);
         if (square_hinder(
-                damage, covering, mid))
+                damage, cover, mid))
         {
             Angle *new_hinder = pool_alloc(
                 pool_for_angles);

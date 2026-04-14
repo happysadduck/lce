@@ -1,6 +1,14 @@
 #include "core.h"
 #include "config.h"
 
+void update_ship(Ship *ship)
+{
+    ship->p.x += 1.0 / 2 * ship->a.x * TICK_STEP * TICK_STEP + ship->v.x * TICK_STEP;
+    ship->p.y += 1.0 / 2 * ship->a.y * TICK_STEP * TICK_STEP + ship->v.y * TICK_STEP;
+    ship->v.x += ship->a.x * TICK_STEP;
+    ship->v.y += ship->a.y * TICK_STEP;
+}
+
 void update_map(
     Map *map,
     PlanController *controller)
@@ -36,21 +44,80 @@ void update_map(
             {
                 ght_node_t *node = pool_alloc(controller->pool_for_ght_nodes);
                 Message *msg = pool_alloc(controller->pool_for_msgs);
+                msg->data = out;
                 ght_insert(&controller->receivers, node, curr_ship->king, msg, sizeof(curr_ship->king), sizeof(msg));
+            }
+            else
+            {
+                pool_return(controller->pool_for_discoveries, out);
             }
         }
         DamageSrc *debeis = map->debris;
         while (debeis)
         {
             Collision collisions[4];
-            get_collisions(curr_ship, debeis, map->squares, collisions);
-            if (calculate_damage(curr_ship, collisions))
+            if (get_collisions(curr_ship, debeis, map->squares, collisions))
             {
-                /*TODO: 生成一个爆炸*/
-                /*TODO: 延迟删除该船只*/
+                if (calculate_damage(curr_ship, collisions, 0))
+                {
+                    /*TODO: 生成一个爆炸*/
+                    /*TODO: 延迟删除该船只*/
+                }
+            }
+            debeis = debeis->next;
+        }
+        DamageSrc *laser = map->lasers;
+        while (laser)
+        {
+            Collision collisions[4];
+            if (get_collisions(curr_ship, laser, map->squares, collisions))
+            {
+                if (calculate_damage(curr_ship, collisions, 0))
+                {
+                    /*TODO: 生成一个爆炸*/
+                    /*TODO: 延迟删除该船只*/
+                }
             }
         }
+        update_ship(curr_ship);
+        if (is_king(curr_ship))
+        {
+            MsgReceiver *receiver;
+            receiver = ght_find(&controller->receivers, curr_ship, sizeof(curr_ship));
+            if (is_king(curr_ship))
+            {
+                while (receiver)
+                {
+                    Discovery *new_discovery = receiver->message.data;
+                    new_discovery->next = map->discoveries;
+                    map->discoveries = new_discovery;
+                    receiver = receiver->next;
+                }
+            }
+            else
+            {
+                ShipAct *ship_act = receiver->message.data;
+                /*....*/
+            }
+        }
+        else
+        {
+            Message *msg;
+            msg = ght_find(&controller->receivers, curr_ship, sizeof(curr_ship));
+        }
         curr_ship = curr_ship->next;
+    }
+    DamageSrc *damage_src = map->debris;
+    while (damage_src)
+    {
+        update_damagesrc(damage_src, map->squares, controller->pool_for_angs);
+        damage_src = damage_src->next;
+    }
+    damage_src = map->lasers;
+    while (damage_src)
+    {
+        update_damagesrc(damage_src, map->squares, controller->pool_for_angs);
+        damage_src = damage_src->next;
     }
 }
 

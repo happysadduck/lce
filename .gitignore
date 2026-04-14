@@ -73,3 +73,6 @@ cmake-build-*/
 
 # VSCode
 .vscode/
+
+# raylib
+raylib/

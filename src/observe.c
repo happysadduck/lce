@@ -183,9 +183,7 @@ int get_discovery(
         p_curr = pL;
         v_curr = vL;
         R = L;
-        curr_plan = curr_plan
-                        ? curr_plan->prev
-                        : 0;
+        curr_plan = curr_plan ? curr_plan->prev : 0;
         if (curr_plan)
             a_curr = curr_plan->act.a;
         else

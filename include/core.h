@@ -5,8 +5,8 @@
 #include "pool.h"
 #include "generic_hash_table.h"
 
-/*TODO: 认为plan controller中的plan和MsgReceiver应该用哈希表比较好. 或需要id分配器*/
-/*TODO: damage.c, 用于处理碰撞的后效以及产生爆炸(需要新类explosion)*/
+/*评论: 太史了, 建议0.2版本开branch并从头开始.*/
+/*应当先写core.c, 按需写core.h, 同时更新文档*/
 
 typedef struct
 {
@@ -124,6 +124,7 @@ typedef struct
     Pool *pool_for_discoveries;
     Pool *pool_for_ght_nodes;
     Pool *pool_for_msgs;
+    Pool *pool_for_angs;
     ght_table_t plans;
     ght_table_t receivers;
 } PlanController;
@@ -159,6 +160,10 @@ void update_damagesrc(
     const Square *covers,
     Pool *pool_for_angles);
 
-int calculate_damage(Ship *ship, const Collision *collisions);
+void update_ship(Ship *ship);
+
+int calculate_damage(Ship *ship, const Collision *collisions, int is_laser);
+
+int is_king(const Ship *ship);
 
 #endif
