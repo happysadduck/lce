@@ -64,7 +64,7 @@ README现在有内容了.
 修改了core.c中由于Monitored这个糟糕名字带来的误解引发的send_commend参数设计错误.
 send_command现在变成了send_msg, 因为理论上没有区别.
 修改了文档, 现在对于友军之间的信息传递的解释更加明确.
-添加了新类ShipStructNode, 用于存储飞船的零件信息, 以给接下来的后效判断部分进行准备.
+添加了新类ship_tStructNode, 用于存储飞船的零件信息, 以给接下来的后效判断部分进行准备.
 
 0.1pre9
 加入了哈希表.
@@ -77,3 +77,7 @@ send_command现在变成了send_msg, 因为理论上没有区别.
 
 0.2pre1
 清理了0.1pre系列的代码
+raylib现在需要手动安装
+
+0.2pre2
+巨大进步, 现在逐渐开始制作界面

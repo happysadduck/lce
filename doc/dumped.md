@@ -20,8 +20,8 @@ void print_discovery(
 }
 
 int main(){
-    Ship observer={0};
-    Ship observed={
+    ship_t observer={0};
+    ship_t observed={
         {1,0}, {0, 0}, {-0.2,0}
     };
     Plan p5={0, 0, 5, {{0.2, 0}, 0}};
@@ -103,7 +103,7 @@ int main() {
 
 void test_case_1() {
     printf("Test case 1: zero acceleration, simple collision\n");
-    Ship ship = {
+    ship_t ship = {
         .p = {0, 0},
         .v = {1, 0},
         .a = {0, 0}
@@ -129,7 +129,7 @@ void test_case_1() {
 
 void test_case_2() {
     printf("Test case 2: zero acceleration, expanding circle\n");
-    Ship ship = {
+    ship_t ship = {
         .p = {0, 0},
         .v = {1, 0},
         .a = {0, 0}
@@ -157,7 +157,7 @@ void test_case_2() {
 
 void test_case_3() {
     printf("Test case 3: non-zero acceleration\n");
-    Ship ship = {
+    ship_t ship = {
         .p = {0, 0},
         .v = {0, 0},
         .a = {1, 0}  // 加速度为1
@@ -183,7 +183,7 @@ void test_case_3() {
 
 void test_case_4() {
     printf("Test case 4: contact at t=0\n");
-    Ship ship = {
+    ship_t ship = {
         .p = {1, 0},
         .v = {0, 0},
         .a = {0, 0}
@@ -217,3 +217,4 @@ int main() {
 ```
 
 至0.2pre1起, 除了pool和generic_hash_table相关代码, 所有0.1pre版本代码均被移除(可能参考)
+自0.2pre2起, pool也被移除
