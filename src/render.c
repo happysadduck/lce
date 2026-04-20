@@ -1,5 +1,7 @@
+#include <stdio.h>
 #include "raylib.h"
 #include "render.h"
+#include "core_to_render.h"
 #include "constants.h"
 
 static inline float GetMapScale(void)
@@ -29,15 +31,28 @@ void render_background()
     DrawRectangle(MapToScreenX(0), MapToScreenY(0), (int)(WIN_WID * scale), (int)(WIN_HEI * scale), BLACK);
 }
 
+void render_god_view(const map_t *map)
+{
+    float scale = GetMapScale();
+    const Color colors[] = COLORS;
+    for (int i = 0; i < map->ship_cnt; i++)
+    {
+        Color color = colors[map->ships[i].flag_ship - map->ships];
+        double x = map->ships[i].px;
+        double y = map->ships[i].py;
+        map_pos_to_screen(&x, &y);
+        DrawCircle(MapToScreenX((int)x), MapToScreenY((int)y), SHIP_RADIUS, color);
+    }
+}
+
 void render_minimap(const map_t *map)
 {
     float scale = GetMapScale();
-    const Color colors[] = {RED, YELLOW, BLUE, GREEN};
+    const Color colors[] = COLORS;
     DrawRectangle(MapToScreenX(1620), MapToScreenX(40), (int)(260 * scale), (int)(260 * scale), GRAY);
     for (int i = 0; i < map->ship_cnt; i++)
     {
         Color color = colors[(map->ships[i].flag_ship - map->ships) / sizeof(ship_t)];
         /*TODO: 将地图上点的位置等比例转到小地图大小上, 然后根据颜色画圆, 母舰应当有特殊标记*/
-        /*同时完善地图显示*/
     }
 }

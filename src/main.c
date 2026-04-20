@@ -7,13 +7,14 @@
 int main()
 {
     InitWindow(WIN_WID, WIN_HEI, "game");
+    map_t map;
+    prepare_map(&map, 4);
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(BLACK);
         render_background();
-        map_t *map = NULL;
-        render_minimap(map);
+        render_god_view(&map);
         EndDrawing();
     }
     CloseWindow();
