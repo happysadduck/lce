@@ -48,6 +48,14 @@ static void draw_predict_trajectory_period(const ship_t *ship, int period_tick_c
     }
 }
 
+static Color color_select(const map_t *map, const ship_t *ship)
+{
+    const Color colors[] = COLORS;
+    if (ship->flag_ship)
+        return colors[ship->flag_ship - map->ships];
+    return DARKGRAY;
+}
+
 void render_background()
 {
     float scale = GetMapScale();
@@ -57,12 +65,11 @@ void render_background()
 void render_god_view(const map_t *map)
 {
     float scale = GetMapScale();
-    const Color colors[] = COLORS;
     for (int i = 0; i < map->ship_cnt; i++)
     {
         const ship_t *curr;
         curr = map->ships + i;
-        Color color = colors[curr->flag_ship - map->ships];
+        Color color = color_select(map, curr);
         double x = curr->px;
         double y = curr->py;
         double ship_render_radius = SHIP_RADIUS;
