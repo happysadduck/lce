@@ -25,6 +25,29 @@ static inline int MapToScreenY(int y)
     return (int)(y * scale) + offsetY;
 }
 
+static void draw_predict_trajectory_period(const ship_t *ship, int period_tick_cnt, Color color)
+{
+    double prev_x = ship->px;
+    double prev_y = ship->py;
+    double preiod_time = (double)period_tick_cnt * TICK_STEP;
+    for (int i = 0; i < TRAJECTORY_SECTIONS; i++)
+    {
+        double t = preiod_time * i / TRAJECTORY_SECTIONS;
+        double x = ship->px + ship->vx * t + 0.5f * ship->ax * t * t;
+        double y = ship->py + ship->vy * t + 0.5f * ship->ay * t * t;
+        double trans_x = x;
+        double trans_y = y;
+        double trans_prev_x = prev_x;
+        double trans_prev_y = prev_y;
+        map_pos_to_screen(&trans_x, &trans_y);
+        map_pos_to_screen(&trans_prev_x, &trans_prev_y);
+        DrawLine(MapToScreenX(trans_x), MapToScreenY(trans_y),
+                 MapToScreenX(trans_prev_x), MapToScreenY(trans_prev_y), color);
+        prev_x = x;
+        prev_y = y;
+    }
+}
+
 void render_background()
 {
     float scale = GetMapScale();
@@ -37,11 +60,17 @@ void render_god_view(const map_t *map)
     const Color colors[] = COLORS;
     for (int i = 0; i < map->ship_cnt; i++)
     {
-        Color color = colors[map->ships[i].flag_ship - map->ships];
-        double x = map->ships[i].px;
-        double y = map->ships[i].py;
+        const ship_t *curr;
+        curr = map->ships + i;
+        Color color = colors[curr->flag_ship - map->ships];
+        double x = curr->px;
+        double y = curr->py;
+        double ship_render_radius = SHIP_RADIUS;
+        if (curr->flag_ship == curr)
+            ship_render_radius *= 1.5;
         map_pos_to_screen(&x, &y);
-        DrawCircle(MapToScreenX((int)x), MapToScreenY((int)y), SHIP_RADIUS, color);
+        DrawCircle(MapToScreenX((int)x), MapToScreenY((int)y), ship_render_radius * scale, color);
+        draw_predict_trajectory_period(curr, 5000, color);
     }
 }
 

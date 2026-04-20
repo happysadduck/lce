@@ -28,16 +28,16 @@
 
 typedef struct ship_t
 {
-    double px;
-    double py;
-    double vx;
-    double vy;
-    double ax;
-    double ay;
-    struct ship_t *flag_ship;
-    bool is_dead;
-    bool can_be_observed;
-    bool dead_msg_is_sent;
+  double px;
+  double py;
+  double vx;
+  double vy;
+  double ax;
+  double ay;
+  struct ship_t *flag_ship;
+  bool is_dead;
+  bool can_be_observed;
+  bool dead_msg_is_sent;
 } ship_t;
 
 typedef struct
@@ -52,10 +52,11 @@ typedef struct
 
 typedef struct
 {
-    ship_t ships[MAX_SHIP_CNT];
-    uint16_t ship_cnt;
+  ship_t ships[MAX_SHIP_CNT];
+  uint16_t ship_cnt;
 } map_t;
 
 void prepare_map(map_t *map, int player_cnt);
+void update_map(map_t *map);
 
 #endif
