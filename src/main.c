@@ -8,7 +8,6 @@ int main()
 {
     InitWindow(WIN_WID, WIN_HEI, "game");
     map_t map;
-    int current_tick = 0;
     prepare_map(&map, 4);
     map.ships[0].vx = -1;
     map.ships[0].ay = 0.1;
@@ -22,10 +21,10 @@ int main()
     map.ships[3].vy = 0.5;
     while (!WindowShouldClose())
     {
-        printf("tick: %d\n", current_tick++);
+        printf("%f %f\n", map.ships[0].px, map.ships[0].px);
         double start = GetTime();
         BeginDrawing();
-        ClearBackground(BLACK);
+        ClearBackground(WHITE);
         render_background();
         render_god_view(&map);
         EndDrawing();

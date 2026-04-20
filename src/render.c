@@ -30,11 +30,19 @@ static void draw_predict_trajectory_period(const ship_t *ship, int period_tick_c
     double prev_x = ship->px;
     double prev_y = ship->py;
     double preiod_time = (double)period_tick_cnt * TICK_STEP;
+    bool is_out = false;
     for (int i = 0; i < TRAJECTORY_SECTIONS; i++)
     {
         double t = preiod_time * i / TRAJECTORY_SECTIONS;
         double x = ship->px + ship->vx * t + 0.5f * ship->ax * t * t;
         double y = ship->py + ship->vy * t + 0.5f * ship->ay * t * t;
+        if (!is_in_map(x, y))
+            is_out = true;
+        if (is_out)
+        {
+            x = prev_x;
+            y = prev_y;
+        }
         double trans_x = x;
         double trans_y = y;
         double trans_prev_x = prev_x;
@@ -72,6 +80,8 @@ void render_god_view(const map_t *map)
         Color color = color_select(map, curr);
         double x = curr->px;
         double y = curr->py;
+        if (!is_in_map(x, y))
+            continue;
         double ship_render_radius = SHIP_RADIUS;
         if (curr->flag_ship == curr)
             ship_render_radius *= 1.5;

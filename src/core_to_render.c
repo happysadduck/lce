@@ -1,6 +1,11 @@
 #include "core_to_render.h"
 #include "constants.h"
 
+int is_in_map(double x, double y)
+{
+    return (x >= -(MAP_WID / 2) && x <= (MAP_WID / 2) && y >= -(MAP_HEI / 2) && y <= (MAP_HEI / 2));
+}
+
 void map_pos_to_screen(double *x, double *y)
 {
     double scale_x = WIN_WID / MAP_WID;
