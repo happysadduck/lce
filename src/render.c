@@ -11,31 +11,30 @@ static inline float GetMapScale(void)
     return (scaleX < scaleY) ? scaleX : scaleY; // 等比缩放，确保全部可见
 }
 
-static inline int MapToScreenX(int x)
+static inline int MapToScreenX(int x, float scale)
 {
-    float scale = GetMapScale();
     int offsetX = (GetScreenWidth() - (int)(WIN_WID * scale)) / 2;
     return (int)(x * scale) + offsetX;
 }
 
-static inline int MapToScreenY(int y)
+static inline int MapToScreenY(int y, float scale)
 {
-    float scale = GetMapScale();
     int offsetY = (GetScreenHeight() - (int)(WIN_HEI * scale)) / 2;
     return (int)(y * scale) + offsetY;
 }
 
 static void draw_predict_trajectory_period(const ship_t *ship, int period_tick_cnt, Color color)
 {
-    double prev_x = ship->px;
-    double prev_y = ship->py;
-    double preiod_time = (double)period_tick_cnt * TICK_STEP;
+    float scale = GetMapScale();
+    float prev_x = ship->px;
+    float prev_y = ship->py;
+    float preiod_time = (float)period_tick_cnt * TICK_STEP;
     bool is_out = false;
     for (int i = 0; i < TRAJECTORY_SECTIONS; i++)
     {
-        double t = preiod_time * i / TRAJECTORY_SECTIONS;
-        double x = ship->px + ship->vx * t + 0.5f * ship->ax * t * t;
-        double y = ship->py + ship->vy * t + 0.5f * ship->ay * t * t;
+        float t = preiod_time * i / TRAJECTORY_SECTIONS;
+        float x = ship->px + ship->vx * t + 0.5f * ship->ax * t * t;
+        float y = ship->py + ship->vy * t + 0.5f * ship->ay * t * t;
         if (!is_in_map(x, y))
             is_out = true;
         if (is_out)
@@ -43,14 +42,14 @@ static void draw_predict_trajectory_period(const ship_t *ship, int period_tick_c
             x = prev_x;
             y = prev_y;
         }
-        double trans_x = x;
-        double trans_y = y;
-        double trans_prev_x = prev_x;
-        double trans_prev_y = prev_y;
+        float trans_x = x;
+        float trans_y = y;
+        float trans_prev_x = prev_x;
+        float trans_prev_y = prev_y;
         map_pos_to_screen(&trans_x, &trans_y);
         map_pos_to_screen(&trans_prev_x, &trans_prev_y);
-        DrawLine(MapToScreenX(trans_x), MapToScreenY(trans_y),
-                 MapToScreenX(trans_prev_x), MapToScreenY(trans_prev_y), color);
+        DrawLine(MapToScreenX(trans_x, scale), MapToScreenY(trans_y, scale),
+                 MapToScreenX(trans_prev_x, scale), MapToScreenY(trans_prev_y, scale), color);
         prev_x = x;
         prev_y = y;
     }
@@ -67,7 +66,7 @@ static Color color_select(const map_t *map, const ship_t *ship)
 void render_background()
 {
     float scale = GetMapScale();
-    DrawRectangle(MapToScreenX(0), MapToScreenY(0), (int)(WIN_WID * scale), (int)(WIN_HEI * scale), BLACK);
+    DrawRectangle(MapToScreenX(0, scale), MapToScreenY(0, scale), (int)(WIN_WID * scale), (int)(WIN_HEI * scale), BLACK);
 }
 
 void render_god_view(const map_t *map)
@@ -78,16 +77,16 @@ void render_god_view(const map_t *map)
         const ship_t *curr;
         curr = map->ships + i;
         Color color = color_select(map, curr);
-        double x = curr->px;
-        double y = curr->py;
+        float x = curr->px;
+        float y = curr->py;
         if (!is_in_map(x, y))
             continue;
-        double ship_render_radius = SHIP_RADIUS;
+        float ship_render_radius = SHIP_RADIUS;
         if (map->ships + curr->flag_ship_idx == curr)
             ship_render_radius *= 1.5;
         map_pos_to_screen(&x, &y);
-        DrawCircle(MapToScreenX((int)x), MapToScreenY((int)y), ship_render_radius * scale, color);
-        draw_predict_trajectory_period(curr, 5000, color);
+        DrawCircle(MapToScreenX((int)x, scale), MapToScreenY((int)y, scale), ship_render_radius * scale, color);
+        draw_predict_trajectory_period(curr, 20, color);
     }
 }
 
@@ -95,7 +94,7 @@ void render_minimap(const map_t *map)
 {
     float scale = GetMapScale();
     const Color colors[] = COLORS;
-    DrawRectangle(MapToScreenX(1620), MapToScreenX(40), (int)(260 * scale), (int)(260 * scale), GRAY);
+    DrawRectangle(MapToScreenX(1620, scale), MapToScreenX(40, scale), (int)(260 * scale), (int)(260 * scale), GRAY);
     for (int i = 0; i < map->ship_cnt; i++)
     {
         Color color = colors[map->ships[i].flag_ship_idx / sizeof(ship_t)];

@@ -32,6 +32,7 @@ void *core_calculate(void *arg)
 int main()
 {
     InitWindow(WIN_WID, WIN_HEI, "game");
+    SetTargetFPS((int)1 / RENDER_INTERVAL);
 
     pthread_t thread;
 
@@ -55,13 +56,12 @@ int main()
 
     while (!WindowShouldClose())
     {
-        double start = GetTime();
-
+        float start = GetTime();
         BeginDrawing();
         ClearBackground(WHITE);
         render_background();
         render_god_view(map);
-        EndDrawing();
+        DrawFPS(0, 0);
 
         flip++;
         if (flip == RENDER_PER_TICK)
@@ -73,13 +73,13 @@ int main()
             flip = 0;
         }
 
-        double elapsed = GetTime() - start;
-        if (elapsed >= RENDER_INTERVAL)
+        float elapsed = GetTime() - start;
+        if (elapsed > RENDER_INTERVAL)
         {
             printf("cale...\n");
-            return -1;
         }
-        WaitTime(RENDER_INTERVAL - elapsed);
+
+        EndDrawing();
     }
     CloseWindow();
 

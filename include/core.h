@@ -28,12 +28,12 @@
 
 typedef struct
 {
-  double px;
-  double py;
-  double vx;
-  double vy;
-  double ax;
-  double ay;
+  float px;
+  float py;
+  float vx;
+  float vy;
+  float ax;
+  float ay;
   int8_t flag_ship_idx;
   bool is_dead;
   bool can_be_observed;
