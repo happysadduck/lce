@@ -13,7 +13,6 @@ void *core_calculate(void *arg)
 {
     map_t *map_next_tick = arg;
 
-    printf("%d\n", map_pointer_pos);
     if (!map_pointer_pos)
     {
         map_next_tick++;
@@ -53,8 +52,6 @@ int main()
     map->ships[3].vy = 0.5;
 
     pthread_create(&thread, NULL, &core_calculate, map);
-
-    printf("i m good\n");
 
     while (!WindowShouldClose())
     {
