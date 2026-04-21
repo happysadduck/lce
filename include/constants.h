@@ -11,6 +11,8 @@
 #define MAP_HEI 20.0f
 #define MAX_PLAYER_CNT 4
 #define MAX_SHIP_CNT 1024
-#define TICK_STEP 0.5f
+#define RENDER_INTERVAL 0.1f
+#define RENDER_PER_TICK 5
+#define TICK_STEP (RENDER_INTERVAL) * (RENDER_PER_TICK)
 
 #endif

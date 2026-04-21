@@ -26,7 +26,7 @@
   上帝均可看见并可区分类别(激光/碎片云), 玩家无法看见.
 */
 
-typedef struct ship_t
+typedef struct
 {
   double px;
   double py;
@@ -34,7 +34,7 @@ typedef struct ship_t
   double vy;
   double ax;
   double ay;
-  struct ship_t *flag_ship;
+  int8_t flag_ship_idx;
   bool is_dead;
   bool can_be_observed;
   bool dead_msg_is_sent;

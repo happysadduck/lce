@@ -59,8 +59,8 @@ static void draw_predict_trajectory_period(const ship_t *ship, int period_tick_c
 static Color color_select(const map_t *map, const ship_t *ship)
 {
     const Color colors[] = COLORS;
-    if (ship->flag_ship)
-        return colors[ship->flag_ship - map->ships];
+    if (ship->flag_ship_idx >= 0)
+        return colors[ship->flag_ship_idx];
     return DARKGRAY;
 }
 
@@ -83,7 +83,7 @@ void render_god_view(const map_t *map)
         if (!is_in_map(x, y))
             continue;
         double ship_render_radius = SHIP_RADIUS;
-        if (curr->flag_ship == curr)
+        if (map->ships + curr->flag_ship_idx == curr)
             ship_render_radius *= 1.5;
         map_pos_to_screen(&x, &y);
         DrawCircle(MapToScreenX((int)x), MapToScreenY((int)y), ship_render_radius * scale, color);
@@ -98,7 +98,7 @@ void render_minimap(const map_t *map)
     DrawRectangle(MapToScreenX(1620), MapToScreenX(40), (int)(260 * scale), (int)(260 * scale), GRAY);
     for (int i = 0; i < map->ship_cnt; i++)
     {
-        Color color = colors[(map->ships[i].flag_ship - map->ships) / sizeof(ship_t)];
+        Color color = colors[map->ships[i].flag_ship_idx / sizeof(ship_t)];
         /*TODO: 将地图上点的位置等比例转到小地图大小上, 然后根据颜色画圆, 母舰应当有特殊标记*/
     }
 }
