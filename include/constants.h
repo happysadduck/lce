@@ -5,7 +5,7 @@
 #define WIN_HEI 540
 #define COLORS {RED, YELLOW, BLUE, GREEN}
 #define SHIP_RADIUS 10.0f
-#define TRAJECTORY_SECTIONS 500
+#define TRAJECTORY_SECTIONS 50
 
 #define MAP_WID 20.0f
 #define MAP_HEI 20.0f

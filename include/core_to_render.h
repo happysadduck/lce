@@ -3,5 +3,6 @@
 
 int is_in_map(float x, float y);
 void map_pos_to_screen(float *x, float *y);
+float map_to_screen_scale(void);
 
 #endif

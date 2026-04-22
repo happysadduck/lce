@@ -26,8 +26,6 @@ static inline int MapToScreenY(int y, float scale)
 static void draw_predict_trajectory_period(const ship_t *ship, int period_tick_cnt, Color color)
 {
     float scale = GetMapScale();
-    float prev_x = ship->px;
-    float prev_y = ship->py;
     float preiod_time = (float)period_tick_cnt * TICK_STEP;
     bool is_out = false;
     for (int i = 0; i < TRAJECTORY_SECTIONS; i++)
@@ -39,19 +37,10 @@ static void draw_predict_trajectory_period(const ship_t *ship, int period_tick_c
             is_out = true;
         if (is_out)
         {
-            x = prev_x;
-            y = prev_y;
+            continue;
         }
-        float trans_x = x;
-        float trans_y = y;
-        float trans_prev_x = prev_x;
-        float trans_prev_y = prev_y;
-        map_pos_to_screen(&trans_x, &trans_y);
-        map_pos_to_screen(&trans_prev_x, &trans_prev_y);
-        DrawLine(MapToScreenX(trans_x, scale), MapToScreenY(trans_y, scale),
-                 MapToScreenX(trans_prev_x, scale), MapToScreenY(trans_prev_y, scale), color);
-        prev_x = x;
-        prev_y = y;
+        map_pos_to_screen(&x, &y);
+        DrawCircle(MapToScreenX(x, scale), MapToScreenY(y, scale), 1, color);
     }
 }
 
@@ -72,6 +61,9 @@ void render_background()
 void render_god_view(const map_t *map)
 {
     float scale = GetMapScale();
+    DrawRectangleLines(MapToScreenX(WIN_WID / 2 - map_to_screen_scale() * MAP_WID / 2, scale),
+                       MapToScreenY(WIN_HEI / 2 - map_to_screen_scale() * MAP_HEI / 2, scale),
+                       map_to_screen_scale() * MAP_WID * scale, map_to_screen_scale() * MAP_HEI * scale, WHITE);
     for (int i = 0; i < map->ship_cnt; i++)
     {
         const ship_t *curr;
