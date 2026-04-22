@@ -31,6 +31,8 @@ void *core_calculate(void *arg)
 
 int main()
 {
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+
     InitWindow(WIN_WID, WIN_HEI, "game");
     SetTargetFPS((int)1 / RENDER_INTERVAL);
 

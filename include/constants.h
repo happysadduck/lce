@@ -1,8 +1,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_h
 
-#define WIN_WID 1920
-#define WIN_HEI 1080
+#define WIN_WID 960
+#define WIN_HEI 540
 #define COLORS {RED, YELLOW, BLUE, GREEN}
 #define SHIP_RADIUS 10.0f
 #define TRAJECTORY_SECTIONS 500
@@ -11,8 +11,8 @@
 #define MAP_HEI 20.0f
 #define MAX_PLAYER_CNT 4
 #define MAX_SHIP_CNT 1024
-#define RENDER_INTERVAL 0.005f
-#define RENDER_PER_TICK 100
+#define RENDER_INTERVAL 0.05f
+#define RENDER_PER_TICK 25
 #define TICK_STEP (RENDER_INTERVAL) * (RENDER_PER_TICK)
 
 #endif
