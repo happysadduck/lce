@@ -60,9 +60,9 @@ int main()
     {
         float start = GetTime();
         BeginDrawing();
-        ClearBackground(WHITE);
-        render_background();
-        render_god_view(map);
+
+        render_flip(map, NULL);
+
         DrawFPS(0, 0);
 
         flip++;
